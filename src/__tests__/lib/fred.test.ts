@@ -33,6 +33,9 @@ describe('fetchFredSeries', () => {
     expect(calledUrl).toContain('api_key=test-key')
     expect(calledUrl).toContain('observation_start=2024-01-01')
     expect(calledUrl).toContain('frequency=m')
+    expect(calledUrl).toContain('file_type=json')
+    expect(calledUrl).toContain('observation_end=2024-04-30')
+    expect(calledUrl).toContain('sort_order=asc')
   })
 
   it('throws on HTTP error', async () => {

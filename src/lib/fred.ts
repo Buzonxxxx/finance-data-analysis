@@ -21,7 +21,9 @@ export async function fetchFredSeries(
   if (!res.ok) throw new Error(`FRED API error: ${res.status}`)
 
   const json = await res.json()
-  return (json.observations as Array<{ date: string; value: string }>)
+  const observations = json.observations as Array<{ date: string; value: string }> | undefined
+  if (!observations) throw new Error('FRED API error: unexpected response shape')
+  return observations
     .filter((o) => o.value !== '.')
     .map((o) => ({
       date: o.date.slice(0, 7), // YYYY-MM
