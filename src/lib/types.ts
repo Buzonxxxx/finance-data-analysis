@@ -23,7 +23,7 @@ export const MATURITY_ORDER: MaturityKey[] = [
 export const MATURITY_BLUE_SHADES = [
   '#1e3a8a', '#1e40af', '#1d4ed8', '#2563eb',
   '#3b82f6', '#60a5fa', '#38bdf8', '#0ea5e9', '#0284c7',
-]
+] as const
 
 export const STOCK_SYMBOLS = [
   { symbol: 'SPY',     yahooSymbol: 'SPY',     label: 'S&P 500 ETF' },
