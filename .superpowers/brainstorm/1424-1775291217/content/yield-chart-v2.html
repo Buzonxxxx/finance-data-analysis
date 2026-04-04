@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>殖利率圖表原型</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #e2e8f0; padding: 16px; }
+
+  .browser-frame { background:#fff; border-radius:10px; box-shadow:0 4px 24px rgba(0,0,0,0.15); overflow:hidden; max-width:900px; margin:0 auto; }
+  .browser-bar { background:#f1f5f9; padding:8px 12px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #e2e8f0; }
+  .browser-dots { display:flex; gap:5px; }
+  .dot { width:10px; height:10px; border-radius:50%; }
+  .dot-r { background:#fc5c65; } .dot-y { background:#fed330; } .dot-g { background:#26de81; }
+  .browser-url { background:#fff; border:1px solid #e2e8f0; border-radius:4px; padding:3px 10px; font-size:11px; color:#64748b; flex:1; }
+
+  .app { background:#f8fafc; }
+  .top-nav { background:#fff; border-bottom:1px solid #e2e8f0; padding:0 20px; display:flex; align-items:center; justify-content:space-between; height:52px; }
+  .logo { font-weight:700; font-size:15px; color:#1e293b; display:flex; align-items:center; gap:6px; }
+  .tabs { display:flex; }
+  .tab { padding:16px 20px; font-size:13px; font-weight:500; color:#64748b; border-bottom:2px solid transparent; cursor:pointer; }
+  .tab.active { color:#2563eb; border-bottom-color:#2563eb; }
+  .last-update { font-size:11px; color:#94a3b8; }
+
+  .content { padding:20px; }
+  .section-title { font-size:16px; font-weight:600; color:#1e293b; margin-bottom:4px; }
+  .section-sub { font-size:12px; color:#64748b; margin-bottom:16px; }
+
+  /* Stat cards */
+  .stat-cards { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+  .stat-card { background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:10px 14px; flex:1; min-width:80px; }
+  .stat-label { font-size:10px; color:#94a3b8; margin-bottom:2px; font-weight:600; letter-spacing:0.5px; }
+  .stat-value { font-size:17px; font-weight:700; color:#1e293b; }
+  .stat-change { font-size:10px; margin-top:2px; }
+  .up { color:#16a34a; } .down { color:#dc2626; }
+  .warn-card { border-color:#fca5a5; background:#fef2f2; }
+  .warn-card .stat-label { color:#ef4444; }
+  .warn-card .stat-value { font-size:13px; color:#dc2626; }
+
+  /* Main yield chart area */
+  .chart-box { background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:16px; margin-bottom:14px; }
+  .chart-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px; }
+  .chart-title { font-size:13px; font-weight:600; color:#1e293b; }
+
+  /* Maturity toggle buttons */
+  .maturity-btns { display:flex; gap:4px; flex-wrap:wrap; }
+  .mat-btn {
+    padding:4px 9px; font-size:11px; font-weight:600; border-radius:4px;
+    cursor:pointer; border:1.5px solid; transition:all 0.15s;
+  }
+
+  /* time range */
+  .time-btns { display:flex; gap:4px; margin-bottom:12px; }
+  .time-btn { padding:3px 9px; font-size:11px; border:1px solid #e2e8f0; border-radius:4px; cursor:pointer; color:#64748b; background:#f8fafc; }
+  .time-btn.active { background:#2563eb; color:#fff; border-color:#2563eb; }
+
+  .chart-note { font-size:11px; color:#94a3b8; margin-top:8px; }
+
+  /* Inversion banner */
+  .inversion-banner {
+    background:#fef2f2; border:1px solid #fca5a5; border-radius:8px;
+    padding:10px 14px; margin-bottom:14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .inversion-icon { font-size:20px; }
+  .inversion-text h4 { font-size:13px; font-weight:600; color:#dc2626; margin-bottom:2px; }
+  .inversion-text p { font-size:11px; color:#ef4444; }
+</style>
+</head>
+<body>
+
+<p style="font-size:13px;color:#475569;text-align:center;margin-bottom:12px;font-weight:500;">
+  公債殖利率 Tab 更新版 — 支援切換不同存續期間折線圖
+</p>
+
+<div class="browser-frame">
+  <div class="browser-bar">
+    <div class="browser-dots">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+    </div>
+    <div class="browser-url">finance-dashboard.zeabur.app</div>
+  </div>
+  <div class="app">
+    <div class="top-nav">
+      <div class="logo">📊 總經財務分析</div>
+      <div class="tabs">
+        <div class="tab active">公債殖利率</div>
+        <div class="tab">股價追蹤</div>
+      </div>
+      <div class="last-update">更新：2026-04-04 09:30</div>
+    </div>
+
+    <div class="content">
+      <div class="section-title">美國公債殖利率監測</div>
+      <div class="section-sub">追蹤各存續期間殖利率走勢，觀察殖利率曲線倒掛現象</div>
+
+      <!-- 即時殖利率數字 -->
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-label">1M</div>
+          <div class="stat-value">5.31%</div>
+          <div class="stat-change up">▲ +0.02%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">3M</div>
+          <div class="stat-value">5.28%</div>
+          <div class="stat-change">— 0.00%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">6M</div>
+          <div class="stat-value">5.15%</div>
+          <div class="stat-change down">▼ -0.01%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">1Y</div>
+          <div class="stat-value">5.02%</div>
+          <div class="stat-change down">▼ -0.02%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">2Y</div>
+          <div class="stat-value">4.85%</div>
+          <div class="stat-change up">▲ +0.03%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">5Y</div>
+          <div class="stat-value">4.71%</div>
+          <div class="stat-change down">▼ -0.01%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">10Y</div>
+          <div class="stat-value">4.62%</div>
+          <div class="stat-change down">▼ -0.02%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">30Y</div>
+          <div class="stat-value">4.78%</div>
+          <div class="stat-change up">▲ +0.01%</div>
+        </div>
+        <div class="stat-card warn-card">
+          <div class="stat-label">⚠ 倒掛警示</div>
+          <div class="stat-value">2Y &gt; 10Y 已 -0.23%</div>
+        </div>
+      </div>
+
+      <!-- 倒掛 Banner -->
+      <div class="inversion-banner">
+        <div class="inversion-icon">⚠️</div>
+        <div class="inversion-text">
+          <h4>殖利率曲線倒掛中（2Y−10Y = −0.23%）</h4>
+          <p>短端利率高於長端，歷史上常為景氣衰退前兆，已持續 18 個月</p>
+        </div>
+      </div>
+
+      <!-- 主圖表：各存續期間折線圖 -->
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">殖利率歷史走勢 — 選擇要顯示的存續期間</div>
+        </div>
+
+        <!-- 存續期間切換按鈕 (可多選) -->
+        <div class="maturity-btns" style="margin-bottom:12px;" id="matBtns">
+          <div class="mat-btn" onclick="toggleMat(this,'1m','#6366f1')" style="border-color:#6366f1;color:#6366f1;">1M</div>
+          <div class="mat-btn" onclick="toggleMat(this,'3m','#8b5cf6')" style="border-color:#8b5cf6;color:#8b5cf6;">3M</div>
+          <div class="mat-btn" onclick="toggleMat(this,'6m','#ec4899')" style="border-color:#ec4899;color:#ec4899;">6M</div>
+          <div class="mat-btn" onclick="toggleMat(this,'1y','#f59e0b')" style="border-color:#f59e0b;color:#f59e0b;">1Y</div>
+          <div class="mat-btn active" onclick="toggleMat(this,'2y','#ef4444')" style="border-color:#ef4444;background:#ef4444;color:#fff;">2Y</div>
+          <div class="mat-btn" onclick="toggleMat(this,'5y','#10b981')" style="border-color:#10b981;color:#10b981;">5Y</div>
+          <div class="mat-btn active" onclick="toggleMat(this,'10y','#2563eb')" style="border-color:#2563eb;background:#2563eb;color:#fff;">10Y</div>
+          <div class="mat-btn" onclick="toggleMat(this,'20y','#0891b2')" style="border-color:#0891b2;color:#0891b2;">20Y</div>
+          <div class="mat-btn" onclick="toggleMat(this,'30y','#475569')" style="border-color:#475569;color:#475569;">30Y</div>
+        </div>
+
+        <!-- 時間範圍 -->
+        <div class="time-btns">
+          <div class="time-btn">1Y</div>
+          <div class="time-btn">3Y</div>
+          <div class="time-btn active">5Y</div>
+          <div class="time-btn">10Y</div>
+          <div class="time-btn">20Y</div>
+          <div class="time-btn">MAX</div>
+        </div>
+
+        <!-- Chart (fake, showing 2Y and 10Y lines with month labels) -->
+        <svg width="100%" height="180" viewBox="0 0 800 180" preserveAspectRatio="none" style="display:block;">
+          <!-- Grid lines -->
+          <line x1="60" y1="20" x2="780" y2="20" stroke="#f1f5f9" stroke-width="1"/>
+          <line x1="60" y1="55" x2="780" y2="55" stroke="#f1f5f9" stroke-width="1"/>
+          <line x1="60" y1="90" x2="780" y2="90" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="60" y1="125" x2="780" y2="125" stroke="#f1f5f9" stroke-width="1"/>
+          <line x1="60" y1="155" x2="780" y2="155" stroke="#f1f5f9" stroke-width="1"/>
+
+          <!-- Y axis labels -->
+          <text x="52" y="23" font-size="9" fill="#94a3b8" text-anchor="end">6%</text>
+          <text x="52" y="58" font-size="9" fill="#94a3b8" text-anchor="end">5%</text>
+          <text x="52" y="93" font-size="9" fill="#94a3b8" text-anchor="end">4%</text>
+          <text x="52" y="128" font-size="9" fill="#94a3b8" text-anchor="end">3%</text>
+          <text x="52" y="158" font-size="9" fill="#94a3b8" text-anchor="end">2%</text>
+
+          <!-- Inverted region (where 2Y > 10Y) shading -->
+          <rect x="400" y="20" width="240" height="135" fill="#fef2f2" opacity="0.6"/>
+          <text x="520" y="38" font-size="9" fill="#f87171" text-anchor="middle">倒掛期間</text>
+
+          <!-- 10Y line (blue) -->
+          <polyline
+            points="60,155 100,148 140,140 180,125 220,110 260,95 300,80 340,70 380,72 420,78 460,84 500,88 540,90 580,88 620,86 660,84 700,82 740,84 780,86"
+            fill="none" stroke="#2563eb" stroke-width="2" stroke-linejoin="round"/>
+
+          <!-- 2Y line (red) -->
+          <polyline
+            points="60,155 100,145 140,132 180,115 220,95 260,78 300,68 340,62 380,60 420,63 460,72 500,80 540,87 580,85 620,84 660,88 700,90 740,90 780,92"
+            fill="none" stroke="#ef4444" stroke-width="2" stroke-linejoin="round"/>
+
+          <!-- Legend -->
+          <rect x="620" y="152" width="12" height="3" fill="#ef4444" rx="1"/>
+          <text x="636" y="157" font-size="9" fill="#ef4444">2Y</text>
+          <rect x="660" y="152" width="12" height="3" fill="#2563eb" rx="1"/>
+          <text x="676" y="157" font-size="9" fill="#2563eb">10Y</text>
+
+          <!-- X axis month labels -->
+          <text x="60"  y="175" font-size="8.5" fill="#94a3b8" text-anchor="middle">2021-04</text>
+          <text x="160" y="175" font-size="8.5" fill="#94a3b8" text-anchor="middle">2021-10</text>
+          <text x="260" y="175" font-size="8.5" fill="#94a3b8" text-anchor="middle">2022-04</text>
+          <text x="360" y="175" font-size="8.5" fill="#94a3b8" text-anchor="middle">2022-10</text>
+          <text x="460" y="175" font-size="8.5" fill="#94a3b8" text-anchor="middle">2023-04</text>
+          <text x="560" y="175" font-size="8.5" fill="#94a3b8" text-anchor="middle">2023-10</text>
+          <text x="660" y="175" font-size="8.5" fill="#94a3b8" text-anchor="middle">2024-04</text>
+          <text x="760" y="175" font-size="8.5" fill="#94a3b8" text-anchor="middle">2024-10</text>
+        </svg>
+
+        <p class="chart-note">可多選存續期間，X 軸顯示月份，灰底區域為殖利率倒掛期間</p>
+      </div>
+
+      <!-- 利差圖 -->
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">10Y − 2Y 利差（Spread）</div>
+        </div>
+        <svg width="100%" height="100" viewBox="0 0 800 100" preserveAspectRatio="none" style="display:block;">
+          <line x1="60" y1="50" x2="780" y2="50" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="52" y="53" font-size="9" fill="#94a3b8" text-anchor="end">0%</text>
+          <text x="52" y="25" font-size="9" fill="#94a3b8" text-anchor="end">+1%</text>
+          <text x="52" y="80" font-size="9" fill="#dc2626" text-anchor="end">-1%</text>
+          <!-- inverted region -->
+          <rect x="400" y="50" width="240" height="40" fill="#fef2f2" opacity="0.7"/>
+          <!-- spread line -->
+          <polyline
+            points="60,30 100,32 140,35 180,40 220,45 260,48 300,50 340,52 380,53 420,58 460,62 500,60 540,55 580,53 620,52 660,50 700,48 740,47 780,48"
+            fill="none" stroke="#2563eb" stroke-width="2" stroke-linejoin="round"/>
+          <text x="60"  y="95" font-size="8.5" fill="#94a3b8" text-anchor="middle">2021-04</text>
+          <text x="260" y="95" font-size="8.5" fill="#94a3b8" text-anchor="middle">2022-04</text>
+          <text x="460" y="95" font-size="8.5" fill="#94a3b8" text-anchor="middle">2023-04</text>
+          <text x="660" y="95" font-size="8.5" fill="#94a3b8" text-anchor="middle">2024-04</text>
+        </svg>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleMat(el, key, color) {
+  const isActive = el.classList.contains('active');
+  if (isActive) {
+    el.classList.remove('active');
+    el.style.background = 'transparent';
+    el.style.color = color;
+  } else {
+    el.classList.add('active');
+    el.style.background = color;
+    el.style.color = '#fff';
+  }
+}
+</script>
+
+</body>
+</html>

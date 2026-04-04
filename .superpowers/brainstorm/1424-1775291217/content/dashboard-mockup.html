@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #e2e8f0; padding: 16px; }
+
+  .browser-frame {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+    overflow: hidden;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .browser-bar {
+    background: #f1f5f9;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .browser-dots { display: flex; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #fc5c65; }
+  .dot-y { background: #fed330; }
+  .dot-g { background: #26de81; }
+  .browser-url { background: #fff; border: 1px solid #e2e8f0; border-radius: 4px; padding: 3px 10px; font-size: 11px; color: #64748b; flex: 1; }
+
+  .app { background: #f8fafc; min-height: 500px; }
+
+  /* Top Nav */
+  .top-nav {
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+  }
+  .logo { font-weight: 700; font-size: 15px; color: #1e293b; display: flex; align-items: center; gap: 6px; }
+  .logo-icon { font-size: 18px; }
+  .tabs { display: flex; gap: 0; }
+  .tab {
+    padding: 16px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .tab.active { color: #2563eb; border-bottom-color: #2563eb; }
+  .last-update { font-size: 11px; color: #94a3b8; }
+
+  /* Content */
+  .content { padding: 20px; }
+
+  /* Yield Tab */
+  .yield-header { margin-bottom: 16px; }
+  .yield-header h2 { font-size: 16px; font-weight: 600; color: #1e293b; margin-bottom: 4px; }
+  .yield-header p { font-size: 12px; color: #64748b; }
+
+  .stat-cards { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .stat-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    flex: 1;
+    min-width: 100px;
+  }
+  .stat-label { font-size: 11px; color: #94a3b8; margin-bottom: 4px; }
+  .stat-value { font-size: 20px; font-weight: 700; color: #1e293b; }
+  .stat-change { font-size: 11px; margin-top: 2px; }
+  .up { color: #16a34a; }
+  .down { color: #dc2626; }
+  .warn-card { border-color: #fca5a5; background: #fef2f2; }
+  .warn-card .stat-label { color: #ef4444; }
+  .warn-card .stat-value { color: #dc2626; font-size: 15px; }
+
+  .chart-container {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .chart-title { font-size: 13px; font-weight: 600; color: #1e293b; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .chart-legend { display: flex; gap: 12px; }
+  .legend-item { font-size: 11px; color: #64748b; display: flex; align-items: center; gap: 4px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Fake chart SVG */
+  .fake-chart { width: 100%; height: 140px; }
+
+  /* Stock Tab */
+  .stock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stock-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .stock-card.full-width { grid-column: 1 / -1; }
+  .stock-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+  .stock-name { font-size: 14px; font-weight: 700; color: #1e293b; }
+  .stock-desc { font-size: 11px; color: #94a3b8; }
+  .stock-price { font-size: 20px; font-weight: 700; color: #1e293b; text-align: right; }
+  .stock-chg { font-size: 11px; text-align: right; }
+
+  .time-btns { display: flex; gap: 4px; margin-bottom: 10px; }
+  .time-btn {
+    padding: 3px 8px;
+    font-size: 11px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #64748b;
+    background: #f8fafc;
+  }
+  .time-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+  .mini-chart { width: 100%; height: 60px; }
+
+  .section-note {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #1d4ed8;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+</style>
+</head>
+<body>
+
+<p style="font-size:13px;color:#475569;text-align:center;margin-bottom:12px;font-weight:500;">Dashboard UI 原型 — 點擊 Tab 可切換頁面</p>
+
+<div class="browser-frame">
+  <div class="browser-bar">
+    <div class="browser-dots">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+    </div>
+    <div class="browser-url">finance-dashboard.zeabur.app</div>
+  </div>
+
+  <div class="app">
+    <div class="top-nav">
+      <div class="logo"><span class="logo-icon">📊</span> 總經財務分析</div>
+      <div class="tabs">
+        <div class="tab active" id="tab-yield" onclick="showTab('yield')">公債殖利率</div>
+        <div class="tab" id="tab-stock" onclick="showTab('stock')">股價追蹤</div>
+      </div>
+      <div class="last-update">更新：2026-04-04 09:30</div>
+    </div>
+
+    <!-- Yield Tab -->
+    <div class="content" id="page-yield">
+      <div class="yield-header">
+        <h2>美國公債殖利率倒掛監測</h2>
+        <p>追蹤 2Y–10Y 利差，倒掛通常為景氣衰退前兆</p>
+      </div>
+
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-label">2Y 殖利率</div>
+          <div class="stat-value">4.85%</div>
+          <div class="stat-change up">▲ +0.03%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">5Y 殖利率</div>
+          <div class="stat-value">4.71%</div>
+          <div class="stat-change down">▼ -0.01%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">10Y 殖利率</div>
+          <div class="stat-value">4.62%</div>
+          <div class="stat-change down">▼ -0.02%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">30Y 殖利率</div>
+          <div class="stat-value">4.78%</div>
+          <div class="stat-change up">▲ +0.01%</div>
+        </div>
+        <div class="stat-card warn-card">
+          <div class="stat-label">⚠ 倒掛警示</div>
+          <div class="stat-value">2Y &gt; 10Y</div>
+          <div class="stat-change down">利差 -0.23%</div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-title">
+          10Y − 2Y 利差走勢
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#2563eb"></div>利差</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#fca5a5"></div>倒掛區間</div>
+          </div>
+        </div>
+        <svg class="fake-chart" viewBox="0 0 600 140" preserveAspectRatio="none">
+          <!-- Zero line -->
+          <line x1="0" y1="70" x2="600" y2="70" stroke="#e2e8f0" stroke-width="1.5"/>
+          <!-- Inverted region fill -->
+          <polygon points="300,70 300,95 380,105 440,100 480,85 480,70" fill="#fef2f2"/>
+          <polygon points="500,70 500,90 540,95 570,88 590,75 590,70" fill="#fef2f2"/>
+          <!-- Spread line -->
+          <polyline points="0,45 50,40 100,55 150,35 200,30 250,50 300,70 330,85 380,98 420,95 450,88 480,72 510,82 540,88 570,80 600,72"
+            fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linejoin="round"/>
+          <!-- Axis labels -->
+          <text x="2" y="67" font-size="9" fill="#94a3b8">0%</text>
+          <text x="2" y="40" font-size="9" fill="#94a3b8">+1%</text>
+          <text x="2" y="100" font-size="9" fill="#dc2626">-1%</text>
+        </svg>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-title">各期限殖利率曲線（今日 vs 1年前）</div>
+        <svg class="fake-chart" viewBox="0 0 600 140" preserveAspectRatio="none">
+          <text x="20" y="135" font-size="9" fill="#94a3b8">1M</text>
+          <text x="100" y="135" font-size="9" fill="#94a3b8">3M</text>
+          <text x="200" y="135" font-size="9" fill="#94a3b8">2Y</text>
+          <text x="320" y="135" font-size="9" fill="#94a3b8">10Y</text>
+          <text x="480" y="135" font-size="9" fill="#94a3b8">30Y</text>
+          <!-- Today (inverted) -->
+          <polyline points="20,50 100,48 200,52 320,58 480,52"
+            fill="none" stroke="#2563eb" stroke-width="2.5"/>
+          <!-- 1 year ago (normal) -->
+          <polyline points="20,80 100,72 200,55 320,40 480,35"
+            fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="490" y="55" font-size="9" fill="#2563eb">今日</text>
+          <text x="490" y="38" font-size="9" fill="#94a3b8">1年前</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Stock Tab (hidden by default) -->
+    <div class="content" id="page-stock" style="display:none">
+      <div class="section-note">
+        ℹ 資料來源：Yahoo Finance（延遲 15 分鐘）
+      </div>
+
+      <div class="time-btns">
+        <div class="time-btn">1Y</div>
+        <div class="time-btn">3Y</div>
+        <div class="time-btn active">5Y</div>
+        <div class="time-btn">10Y</div>
+        <div class="time-btn">20Y</div>
+        <div class="time-btn">MAX</div>
+      </div>
+
+      <div class="stock-grid">
+        <!-- SPY -->
+        <div class="stock-card">
+          <div class="stock-header">
+            <div><div class="stock-name">SPY</div><div class="stock-desc">S&amp;P 500 ETF</div></div>
+            <div><div class="stock-price">$568.20</div><div class="stock-chg up">▲ +1.23%</div></div>
+          </div>
+          <svg class="mini-chart" viewBox="0 0 200 60" preserveAspectRatio="none">
+            <polyline points="0,50 30,45 60,40 90,35 110,38 130,30 160,20 180,15 200,12"
+              fill="none" stroke="#16a34a" stroke-width="1.8"/>
+          </svg>
+        </div>
+        <!-- BND -->
+        <div class="stock-card">
+          <div class="stock-header">
+            <div><div class="stock-name">BND</div><div class="stock-desc">美國債券 ETF</div></div>
+            <div><div class="stock-price">$73.45</div><div class="stock-chg down">▼ -0.21%</div></div>
+          </div>
+          <svg class="mini-chart" viewBox="0 0 200 60" preserveAspectRatio="none">
+            <polyline points="0,20 30,22 60,28 80,30 100,25 130,35 160,38 180,42 200,40"
+              fill="none" stroke="#dc2626" stroke-width="1.8"/>
+          </svg>
+        </div>
+        <!-- TSM -->
+        <div class="stock-card">
+          <div class="stock-header">
+            <div><div class="stock-name">TSM</div><div class="stock-desc">台積電 ADR</div></div>
+            <div><div class="stock-price">$178.50</div><div class="stock-chg up">▲ +2.10%</div></div>
+          </div>
+          <svg class="mini-chart" viewBox="0 0 200 60" preserveAspectRatio="none">
+            <polyline points="0,55 40,48 70,42 100,30 120,35 140,20 170,15 190,10 200,8"
+              fill="none" stroke="#16a34a" stroke-width="1.8"/>
+          </svg>
+        </div>
+        <!-- 0050 -->
+        <div class="stock-card">
+          <div class="stock-header">
+            <div><div class="stock-name">0050</div><div class="stock-desc">元大台灣 50</div></div>
+            <div><div class="stock-price">NT$178.2</div><div class="stock-chg up">▲ +0.85%</div></div>
+          </div>
+          <svg class="mini-chart" viewBox="0 0 200 60" preserveAspectRatio="none">
+            <polyline points="0,50 30,46 60,42 90,38 110,40 130,32 160,22 180,18 200,15"
+              fill="none" stroke="#16a34a" stroke-width="1.8"/>
+          </svg>
+        </div>
+        <!-- 2330 -->
+        <div class="stock-card">
+          <div class="stock-header">
+            <div><div class="stock-name">2330</div><div class="stock-desc">台積電</div></div>
+            <div><div class="stock-price">NT$925</div><div class="stock-chg up">▲ +1.65%</div></div>
+          </div>
+          <svg class="mini-chart" viewBox="0 0 200 60" preserveAspectRatio="none">
+            <polyline points="0,55 30,50 60,44 90,35 110,38 130,25 160,15 180,10 200,8"
+              fill="none" stroke="#16a34a" stroke-width="1.8"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(name) {
+  document.getElementById('page-yield').style.display = name === 'yield' ? 'block' : 'none';
+  document.getElementById('page-stock').style.display = name === 'stock' ? 'block' : 'none';
+  document.getElementById('tab-yield').className = 'tab' + (name === 'yield' ? ' active' : '');
+  document.getElementById('tab-stock').className = 'tab' + (name === 'stock' ? ' active' : '');
+}
+</script>
+
+</body>
+</html>
