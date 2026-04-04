@@ -46,7 +46,9 @@ export function SpreadChart({ twoYearData, tenYearData }: SpreadChartProps) {
             width={40}
           />
           <Tooltip
-            formatter={(value: number) => [`${value.toFixed(2)}%`, '10Y−2Y 利差']}
+            formatter={((value: number | undefined) =>
+              value !== undefined ? [`${value.toFixed(2)}%`, '10Y−2Y 利差'] : ['-', '10Y−2Y 利差']
+            ) as any}
             contentStyle={{ fontSize: 11 }}
           />
           <ReferenceLine y={0} stroke="#94a3b8" strokeDasharray="4 3" />

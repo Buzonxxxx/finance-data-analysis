@@ -115,7 +115,9 @@ export function YieldChart({
             width={40}
           />
           <Tooltip
-            formatter={(value: number, name: string) => [`${value.toFixed(2)}%`, name]}
+            formatter={((value: number | undefined, name: string) =>
+              value !== undefined ? [`${value.toFixed(2)}%`, name] : ['-', name]
+            ) as any}
             labelStyle={{ fontSize: 11 }}
             contentStyle={{ fontSize: 11 }}
           />

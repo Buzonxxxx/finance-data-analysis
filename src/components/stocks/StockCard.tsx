@@ -33,7 +33,9 @@ export function StockCard({ stock }: StockCardProps) {
           <XAxis dataKey="date" hide />
           <YAxis domain={['auto', 'auto']} hide />
           <Tooltip
-            formatter={(value: number) => [`$${value.toFixed(2)}`, stock.symbol]}
+            formatter={((value: number | undefined) =>
+              value !== undefined ? [`$${value.toFixed(2)}`, stock.symbol] : ['-', stock.symbol]
+            ) as any}
             contentStyle={{ fontSize: 10 }}
           />
           <Line
