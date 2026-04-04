@@ -22,14 +22,19 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   const { start, end } = timeRangeToDates(range)
   let result
-  try {
-    result = await fetchStockData(
-      stockConfig.yahooSymbol,
-      new Date(start),
-      new Date(end)
-    )
-  } catch (err) {
-    console.error('Yahoo Finance fetch error:', err)
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      result = await fetchStockData(
+        stockConfig.yahooSymbol,
+        new Date(start),
+        new Date(end)
+      )
+      break
+    } catch (err) {
+      console.error(`Yahoo Finance fetch error (attempt ${attempt + 1}):`, err)
+    }
+  }
+  if (!result) {
     return NextResponse.json({ error: 'Failed to fetch stock data' }, { status: 502 })
   }
 
