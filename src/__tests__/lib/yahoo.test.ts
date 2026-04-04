@@ -24,7 +24,7 @@ const MOCK_CHART = {
 
 describe('fetchStockData', () => {
   beforeEach(() => {
-    ;(yahooFinance.chart as jest.Mock).mockResolvedValue(MOCK_CHART)
+    ;(yahooFinance.chart as unknown as jest.Mock).mockResolvedValue(MOCK_CHART)
   })
 
   it('returns current price from meta', async () => {
