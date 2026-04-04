@@ -1,7 +1,7 @@
-import { YahooFinance } from 'yahoo-finance2'
+import YahooFinanceClass from 'yahoo-finance2'
 import type { StockDataPoint } from './types'
 
-const yf = new YahooFinance()
+const yf = new YahooFinanceClass()
 
 export interface StockFetchResult {
   currentPrice: number

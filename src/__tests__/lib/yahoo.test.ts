@@ -1,15 +1,16 @@
 import { fetchStockData } from '@/lib/yahoo'
-import { YahooFinance } from 'yahoo-finance2'
+import YahooFinanceClass from 'yahoo-finance2'
 
-// Mock yahoo-finance2 v3: YahooFinance is a class
+// Mock yahoo-finance2 v3: default export is the YahooFinance class
 jest.mock('yahoo-finance2', () => ({
-  YahooFinance: jest.fn().mockImplementation(() => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
     chart: jest.fn(),
   })),
 }))
 
 const getMockChart = () =>
-  (YahooFinance as unknown as jest.Mock).mock.results[0]?.value?.chart as jest.Mock
+  (YahooFinanceClass as unknown as jest.Mock).mock.results[0]?.value?.chart as jest.Mock
 
 const MOCK_CHART = {
   meta: {
