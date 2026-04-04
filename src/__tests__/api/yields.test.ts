@@ -34,6 +34,7 @@ describe('GET /api/yields', () => {
     expect(data.data).toHaveLength(2)
     expect(data.currentValue).toBe(4.45)
     expect(data.previousValue).toBe(4.33)
+    expect(data.updatedAt).toBeDefined()
   })
 
   it('returns 400 for invalid maturity', async () => {

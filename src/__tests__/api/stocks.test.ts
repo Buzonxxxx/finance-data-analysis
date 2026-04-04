@@ -2,6 +2,9 @@
  * @jest-environment node
  */
 
+import { GET } from '@/app/api/stocks/route'
+import { NextRequest } from 'next/server'
+
 jest.mock('@/lib/yahoo', () => ({
   fetchStockData: jest.fn().mockResolvedValue({
     currentPrice: 568.2,
@@ -9,9 +12,6 @@ jest.mock('@/lib/yahoo', () => ({
     history: [{ date: '2025-04', price: 550.0 }],
   }),
 }))
-
-import { GET } from '@/app/api/stocks/route'
-import { NextRequest } from 'next/server'
 
 describe('GET /api/stocks', () => {
   it('returns stock data for a valid symbol', async () => {
@@ -26,6 +26,7 @@ describe('GET /api/stocks', () => {
     expect(data.currentPrice).toBe(568.2)
     expect(data.changePercent).toBe(1.23)
     expect(data.history).toHaveLength(1)
+    expect(data.updatedAt).toBeDefined()
   })
 
   it('returns 400 for unknown symbol', async () => {

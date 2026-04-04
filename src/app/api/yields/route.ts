@@ -14,6 +14,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Invalid maturity' }, { status: 400 })
   }
 
+  const VALID_RANGES: TimeRange[] = ['1Y', '3Y', '5Y', '10Y', '20Y', 'MAX']
+  if (!VALID_RANGES.includes(range)) {
+    return NextResponse.json({ error: 'Invalid range' }, { status: 400 })
+  }
+
   const apiKey = process.env.FRED_API_KEY
   if (!apiKey) {
     return NextResponse.json({ error: 'FRED_API_KEY not configured' }, { status: 500 })
@@ -22,7 +27,14 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const { start, end } = timeRangeToDates(range)
   const seriesId = MATURITY_SERIES[maturity]
 
-  const data = await fetchFredSeries(seriesId, start, end, apiKey)
+  let data
+  try {
+    data = await fetchFredSeries(seriesId, start, end, apiKey)
+  } catch (err) {
+    console.error('FRED fetch error:', err)
+    return NextResponse.json({ error: 'Failed to fetch yield data' }, { status: 502 })
+  }
+
   const currentValue = data.at(-1)?.value ?? 0
   const previousValue = data.at(-2)?.value ?? 0
 
