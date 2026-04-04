@@ -16,6 +16,7 @@ export async function fetchStockData(
     period1: startDate,
     period2: endDate,
     interval: '1mo',
+    return: 'object',
   }) as {
     meta: { regularMarketPrice?: number; chartPreviousClose?: number }
     timestamp?: number[]

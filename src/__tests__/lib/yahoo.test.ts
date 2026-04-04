@@ -55,6 +55,7 @@ describe('fetchStockData', () => {
       period1: start,
       period2: end,
       interval: '1mo',
+      return: 'object',
     })
   })
 })
