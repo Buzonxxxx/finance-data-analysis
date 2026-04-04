@@ -1,10 +1,12 @@
 interface InversionBannerProps {
   isInverted: boolean
-  spread: number         // 10Y - 2Y, negative when inverted
+  spread: number         // long - short, negative when inverted
   daysSinceInversion: number
+  shortLabel?: string
+  longLabel?: string
 }
 
-export function InversionBanner({ isInverted, spread, daysSinceInversion }: InversionBannerProps) {
+export function InversionBanner({ isInverted, spread, daysSinceInversion, shortLabel = '2Y', longLabel = '10Y' }: InversionBannerProps) {
   if (!isInverted) return null
 
   return (
@@ -12,7 +14,7 @@ export function InversionBanner({ isInverted, spread, daysSinceInversion }: Inve
       <span className="text-xl mt-0.5">⚠️</span>
       <div>
         <h4 className="text-sm font-semibold text-red-700">
-          殖利率曲線倒掛中（2Y−10Y = {spread.toFixed(2)}%）
+          殖利率曲線倒掛中（{shortLabel}−{longLabel} = {spread.toFixed(2)}%）
         </h4>
         <p className="text-xs text-red-500 mt-0.5">
           短端利率高於長端，歷史上常為景氣衰退前兆，已持續 {daysSinceInversion} 天

@@ -84,14 +84,21 @@ export function YieldTab() {
     )
   }
 
-  const two = yields['2Y']?.currentValue ?? 0
-  const ten = yields['10Y']?.currentValue ?? 0
-  const isInverted = two > 0 && ten > 0 && two > ten
+  // Derive short/long from selected maturities (by MATURITY_ORDER position)
+  const sortedSelected = [...selectedMaturities].sort(
+    (a, b) => MATURITY_ORDER.indexOf(a) - MATURITY_ORDER.indexOf(b)
+  )
+  const shortKey = sortedSelected[0]
+  const longKey = sortedSelected[sortedSelected.length - 1]
 
-  const data2Y = yields['2Y']?.data ?? []
-  const data10Y = yields['10Y']?.data ?? []
-  const inversionPeriods = computeInversionPeriods(data2Y, data10Y)
-  const daysSince = isInverted ? calcDaysSinceInversion(data2Y, data10Y) : 0
+  const shortVal = yields[shortKey]?.currentValue ?? 0
+  const longVal = yields[longKey]?.currentValue ?? 0
+  const isInverted = shortVal > 0 && longVal > 0 && shortVal > longVal
+
+  const dataShort = yields[shortKey]?.data ?? []
+  const dataLong = yields[longKey]?.data ?? []
+  const inversionPeriods = computeInversionPeriods(dataShort, dataLong)
+  const daysSince = isInverted ? calcDaysSinceInversion(dataShort, dataLong) : 0
 
   const seriesData: Partial<Record<MaturityKey, Array<{ date: string; value: number }>>> = {}
   MATURITY_ORDER.forEach((m) => { if (yields[m]) seriesData[m] = yields[m]!.data })
@@ -111,8 +118,10 @@ export function YieldTab() {
 
       <InversionBanner
         isInverted={isInverted}
-        spread={ten - two}
+        spread={longVal - shortVal}
         daysSinceInversion={daysSince}
+        shortLabel={shortKey}
+        longLabel={longKey}
       />
 
       <YieldChart
@@ -124,7 +133,12 @@ export function YieldTab() {
         inversionPeriods={inversionPeriods}
       />
 
-      <SpreadChart twoYearData={data2Y} tenYearData={data10Y} />
+      <SpreadChart
+        shortData={dataShort}
+        longData={dataLong}
+        shortLabel={shortKey}
+        longLabel={longKey}
+      />
     </div>
   )
 }

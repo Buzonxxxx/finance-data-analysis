@@ -17,23 +17,28 @@ jest.mock('recharts', () => {
   }
 })
 
-const twoYear: YieldDataPoint[] = [
+const shortData: YieldDataPoint[] = [
   { date: '2024-01', value: 4.85 },
   { date: '2024-02', value: 4.90 },
 ]
-const tenYear: YieldDataPoint[] = [
+const longData: YieldDataPoint[] = [
   { date: '2024-01', value: 4.62 },
   { date: '2024-02', value: 4.95 },
 ]
 
 describe('SpreadChart', () => {
-  it('renders the chart title', () => {
-    render(<SpreadChart twoYearData={twoYear} tenYearData={tenYear} />)
-    expect(screen.getByText(/10Y.*2Y/)).toBeInTheDocument()
+  it('renders the chart title with dynamic labels', () => {
+    render(<SpreadChart shortData={shortData} longData={longData} shortLabel="2Y" longLabel="10Y" />)
+    expect(screen.getByText(/10Y−2Y 利差/)).toBeInTheDocument()
+  })
+
+  it('renders custom maturity labels', () => {
+    render(<SpreadChart shortData={shortData} longData={longData} shortLabel="3M" longLabel="30Y" />)
+    expect(screen.getByText(/30Y−3M 利差/)).toBeInTheDocument()
   })
 
   it('renders the spread chart element', () => {
-    render(<SpreadChart twoYearData={twoYear} tenYearData={tenYear} />)
+    render(<SpreadChart shortData={shortData} longData={longData} shortLabel="2Y" longLabel="10Y" />)
     expect(screen.getByTestId('spread-chart')).toBeInTheDocument()
   })
 })
