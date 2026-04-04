@@ -18,7 +18,7 @@ export async function fetchFredSeries(
   url.searchParams.set('frequency', 'm')
 
   const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), 15000)
+  const timeout = setTimeout(() => controller.abort(), 30000)
 
   let res: Response
   try {
