@@ -17,7 +17,15 @@ export async function fetchFredSeries(
   url.searchParams.set('sort_order', 'asc')
   url.searchParams.set('frequency', 'm')
 
-  const res = await fetch(url.toString())
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 15000)
+
+  let res: Response
+  try {
+    res = await fetch(url.toString(), { signal: controller.signal })
+  } finally {
+    clearTimeout(timeout)
+  }
   if (!res.ok) throw new Error(`FRED API error: ${res.status}`)
 
   const json = await res.json()

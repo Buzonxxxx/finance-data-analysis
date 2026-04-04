@@ -28,10 +28,17 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const seriesId = MATURITY_SERIES[maturity]
 
   let data
-  try {
-    data = await fetchFredSeries(seriesId, start, end, apiKey)
-  } catch (err) {
-    console.error('FRED fetch error:', err)
+  let lastErr: unknown
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      data = await fetchFredSeries(seriesId, start, end, apiKey)
+      break
+    } catch (err) {
+      lastErr = err
+      console.error(`FRED fetch error (attempt ${attempt + 1}):`, err)
+    }
+  }
+  if (!data) {
     return NextResponse.json({ error: 'Failed to fetch yield data' }, { status: 502 })
   }
 
