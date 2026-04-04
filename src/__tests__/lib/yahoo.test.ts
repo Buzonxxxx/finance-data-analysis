@@ -1,14 +1,15 @@
 import { fetchStockData } from '@/lib/yahoo'
+import { YahooFinance } from 'yahoo-finance2'
 
-// Mock yahoo-finance2
+// Mock yahoo-finance2 v3: YahooFinance is a class
 jest.mock('yahoo-finance2', () => ({
-  __esModule: true,
-  default: {
+  YahooFinance: jest.fn().mockImplementation(() => ({
     chart: jest.fn(),
-  },
+  })),
 }))
 
-import yahooFinance from 'yahoo-finance2'
+const getMockChart = () =>
+  (YahooFinance as unknown as jest.Mock).mock.results[0]?.value?.chart as jest.Mock
 
 const MOCK_CHART = {
   meta: {
@@ -24,7 +25,7 @@ const MOCK_CHART = {
 
 describe('fetchStockData', () => {
   beforeEach(() => {
-    ;(yahooFinance.chart as unknown as jest.Mock).mockResolvedValue(MOCK_CHART)
+    getMockChart().mockResolvedValue(MOCK_CHART)
   })
 
   it('returns current price from meta', async () => {
@@ -47,11 +48,11 @@ describe('fetchStockData', () => {
     ])
   })
 
-  it('calls yahoo-finance2 chart with correct params', async () => {
+  it('calls chart with correct params', async () => {
     const start = new Date('2021-01-01')
     const end = new Date('2021-04-01')
     await fetchStockData('SPY', start, end)
-    expect(yahooFinance.chart).toHaveBeenCalledWith('SPY', {
+    expect(getMockChart()).toHaveBeenCalledWith('SPY', {
       period1: start,
       period2: end,
       interval: '1mo',

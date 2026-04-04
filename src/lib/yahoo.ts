@@ -1,5 +1,7 @@
-import yahooFinance from 'yahoo-finance2'
+import { YahooFinance } from 'yahoo-finance2'
 import type { StockDataPoint } from './types'
+
+const yf = new YahooFinance()
 
 export interface StockFetchResult {
   currentPrice: number
@@ -12,7 +14,7 @@ export async function fetchStockData(
   startDate: Date,
   endDate: Date
 ): Promise<StockFetchResult> {
-  const result = await yahooFinance.chart(yahooSymbol, {
+  const result = await yf.chart(yahooSymbol, {
     period1: startDate,
     period2: endDate,
     interval: '1mo',
