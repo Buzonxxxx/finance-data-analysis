@@ -28,9 +28,20 @@ export function StockCard({ stock }: StockCardProps) {
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={60}>
+      <ResponsiveContainer width="100%" height={80}>
         <LineChart data={stock.history} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-          <XAxis dataKey="date" hide />
+          <XAxis
+            dataKey="date"
+            tick={{ fontSize: 9, fill: '#94a3b8' }}
+            tickLine={false}
+            axisLine={false}
+            interval={0}
+            height={14}
+            tickFormatter={(value: string) => {
+              const [year, month] = value.split('-')
+              return month === '01' ? `'${year.slice(2)}` : ''
+            }}
+          />
           <YAxis domain={['auto', 'auto']} hide />
           <Tooltip
             formatter={((value: number | undefined) =>
